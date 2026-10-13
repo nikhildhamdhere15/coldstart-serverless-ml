@@ -1,0 +1,40 @@
+# ── Secrets & credentials ──────────────────────────────────────────
+.env
+.env.example
+.env.local
+.env.*.local
+*.pem
+cold.pem
+*.key
+
+# ── Streamlit secrets (never commit) ───────────────────────────────
+.streamlit/secrets.toml
+
+# ── Python cache ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# ── Virtual environments ─────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+
+# ── Test artifacts ───────────────────────────────────────────────────
+.pytest_cache/
+.hypothesis/
+*.egg-info/
+
+# ── OS files ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE files ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo

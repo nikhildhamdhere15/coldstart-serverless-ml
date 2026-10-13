@@ -1,0 +1,103 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[top=1.5cm, bottom=1.5cm, left=1.8cm, right=1.8cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+\setlength{\parskip}{3pt}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+{\large\textbf{COLDSTART: Cost- and Latency-Optimized Serverless Orchestration}}\\[2pt]
+{\normalsize\textbf{via Multi-Modal Prediction and Confidence-Based Warming}}\\[4pt]
+\small
+Abhishek Doke \quad Nikhil Dhamdhere \quad Joanna Dharwadkar \quad Geetanjali Bejjalwar\\
+\textit{Guide: Dr. Alpana Adsul}\\
+Department of Computer Engineering, Dr. D.Y. Patil College of Engineering and Innovation, Varale, Talegaon, Pune \quad 2024--2025
+\end{center}
+
+\noindent\rule{\linewidth}{0.8pt}
+
+\smallskip
+\noindent\textbf{Problem Statement:}
+AWS Lambda (Function-as-a-Service) suffers from \textit{cold start latency} of 500\,ms to several seconds when an idle function receives a new request. Existing solutions use static keep-alive policies or single-model predictions, causing 40--60\% resource waste. There is no system that simultaneously minimizes cold start latency \textit{and} resource cost using confidence-aware ML predictions.
+
+\smallskip
+\noindent\textbf{Proposed Solution:}
+COLDSTART is a cloud-native intelligent orchestration system that proactively predicts cold start events using a dual-model ensemble (XGBoost + Random Forest) and automatically pre-warms Lambda functions before requests arrive. A novel \textbf{Confidence-Based Warming (CBW)} mechanism gates pre-warming only when both models agree with high confidence, eliminating wasteful resource allocation.
+
+\smallskip
+\noindent\textbf{System Components:}
+\begin{itemize}[leftmargin=1.4em, itemsep=1pt, topsep=1pt]
+\item \textbf{Dual-Model Ensemble:} XGBoost (70\%) + Random Forest (30\%) on AWS SageMaker Serverless Endpoints predict cold start probability in real time from CloudWatch metrics.
+\item \textbf{IntelligentLambdaWarmer:} AWS Lambda function that evaluates predictions, applies CBW gating, and issues pre-warm pings to target functions (auth, profile, search).
+\item \textbf{ETL Pipeline:} Automated DynamoDB-to-S3 pipeline processes traffic data every 15 minutes to generate ML input features.
+\item \textbf{Monitoring Dashboard:} Streamlit-based real-time dashboard displaying cold start probability, warming success rate, cost savings, and system health via CloudWatch API.
+\item \textbf{Traffic Generator:} EC2-based load simulator generating realistic API traffic patterns for system testing and validation.
+\end{itemize}
+
+\smallskip
+\noindent\textbf{Technology Stack:}
+
+\noindent
+\begin{tabular}{@{} p{3cm} p{12.5cm} @{}}
+Cloud Platform & AWS Lambda, SageMaker, CloudWatch, DynamoDB, S3, EC2, API Gateway \\
+ML / Backend   & Python 3.x, Scikit-learn, XGBoost, Random Forest, Boto3, Pandas \\
+Frontend       & Streamlit Dashboard, AWS CloudWatch API \\
+\end{tabular}
+
+\smallskip
+\noindent\textbf{Key Results:}
+
+\noindent
+\begin{tabular}{@{} p{5cm} p{2.2cm} p{5cm} p{2.2cm} @{}}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Metric} & \textbf{Value} \\
+\midrule
+Cold Start Reduction   & 58.7\%  & Prediction Accuracy (F1) & 94.2\% \\
+P95 Latency            & 187\,ms & Warming Success Rate      & 98.1\% \\
+Cost Efficiency        & 34.8\%  & System Uptime             & 99.3\% \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\noindent\textbf{Novelty / Original Contribution:}
+The Confidence-Based Warming (CBW) mechanism is the core original contribution. It calculates a confidence score from the agreement between XGBoost and Random Forest predictions. Pre-warming is triggered only when both the cold start probability exceeds a threshold \textit{and} the model confidence is high, directly minimizing false positives (wasted warming) while maintaining low latency. This dual-condition gating policy is not present in any existing cold start mitigation system. Unlike prior work that uses static keep-alive timers or single-model predictions, COLDSTART dynamically adapts its warming decisions based on real-time ensemble consensus, making it both cost-aware and performance-aware simultaneously.
+
+\smallskip
+\noindent\textbf{Comparison with Existing Approaches:}
+
+\noindent
+\begin{tabular}{@{} p{4.2cm} p{2.8cm} p{2.8cm} p{2.8cm} p{2.8cm} @{}}
+\toprule
+\textbf{Feature} & \textbf{Static Keep-Alive} & \textbf{Single ML Model} & \textbf{Priority Heuristic} & \textbf{COLDSTART} \\
+\midrule
+Cold Start Reduction  & Low     & Moderate & High     & \textbf{Highest} \\
+Resource Waste        & High    & High     & Moderate & \textbf{Lowest}  \\
+Confidence Gating     & No      & No       & No       & \textbf{Yes}     \\
+Real-time Dashboard   & No      & No       & No       & \textbf{Yes}     \\
+AWS Native Deployment & Partial & Partial  & No       & \textbf{Full}    \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\noindent\textbf{Future Scope:}
+\begin{itemize}[leftmargin=1.4em, itemsep=1pt, topsep=1pt]
+\item Extend to multi-cloud platforms (Azure Functions, Google Cloud Run) with a unified telemetry abstraction layer.
+\item Replace static ensemble weights with a Deep Reinforcement Learning agent that continuously optimizes warming thresholds based on live cost-benefit feedback.
+\item Add container memory and CPU size prediction to move beyond binary warm/no-warm decisions toward optimal resource sizing.
+\item Integrate anomaly detection to identify unusual traffic spikes and trigger emergency pre-warming before SLA violations occur.
+\end{itemize}
+
+\noindent\rule{\linewidth}{0.8pt}
+\begin{center}
+\small\textit{Final Year Project --- B.E. Computer Engineering --- Academic Year 2024--2025}
+\end{center}
+
+\end{document}
